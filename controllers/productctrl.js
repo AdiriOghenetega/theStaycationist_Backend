@@ -6,7 +6,7 @@ const productModel = require("../database/schemas/products");
 const userModel = require("../database/schemas/user");
 
 const handleProductUpload = async (req, res) => {
-  const { name, category, image, price, description, location } = req.body;
+  const { name, category, image, price, description, location,rooms,baths } = req.body;
   const { id } = req.params;
   try {
     if(id){
@@ -14,7 +14,7 @@ const handleProductUpload = async (req, res) => {
       //find user with ID and check if user is an admin
       const isAdmin = await userModel.findById(id);
       if (isAdmin && isAdmin.role.toLowerCase() === "admin") {
-          if (name && category && image && price && description && location) {
+          if (name && category && image && price && description && location && rooms && baths) {
             const imageUpload = await cloudinary.uploader.upload(image, {
               folder: "theStaycationist",
               timeout: 60000,
@@ -27,6 +27,9 @@ const handleProductUpload = async (req, res) => {
               price,
               description,
               location,
+              rooms,
+              baths,
+              topSeller:false
             });
             res.send({ message: "Upload successfully", data });
           }

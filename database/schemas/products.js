@@ -6,6 +6,8 @@ const schemaProduct =new mongoose.Schema({
     image: String,
     images:String,
     price: String,
+    baths: String,
+    rooms: String,
     description: String,
     location : String,
     topSeller : Boolean
