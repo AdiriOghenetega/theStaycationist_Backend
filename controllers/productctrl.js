@@ -1,42 +1,57 @@
 const cloudinary = require("../utils/uploadImage");
 
-
 //import schema
 const productModel = require("../database/schemas/products");
 const userModel = require("../database/schemas/user");
 
 const handleProductUpload = async (req, res) => {
-  const { name, category, image, price, description, location,rooms,baths } = req.body;
+  const { name, category, images, price, description, location, rooms, baths } =
+    req.body;
   const { id } = req.params;
   try {
-    if(id){
-
+    if (id) {
       //find user with ID and check if user is an admin
       const isAdmin = await userModel.findById(id);
       if (isAdmin && isAdmin.role.toLowerCase() === "admin") {
-          if (name && category && image && price && description && location && rooms && baths) {
-            const imageUpload = await cloudinary.uploader.upload(image, {
+        if (
+          name &&
+          category &&
+          images &&
+          price &&
+          description &&
+          location &&
+          rooms &&
+          baths
+        ) {
+          const promises = [];
+
+          for (const image of images) {
+            const promise = cloudinary.uploader.upload(image, {
               folder: "theStaycationist",
-              timeout: 60000,
             });
-  
+            promises.push(promise);
+          }
+
+          Promise.all(promises).then(async (results) => {
+            const imageUploads = results.map((el) => el.secure_url);
             const data = await productModel.create({
               name,
               category,
-              image: imageUpload?.secure_url,
+              images: imageUploads,
               price,
               description,
               location,
               rooms,
               baths,
-              topSeller:false
+              topSeller: false,
             });
             res.send({ message: "Upload successfully", data });
-          }
+          });
+        }
       } else {
         res.send({ message: "only admins can perform this action" });
       }
-    }else{
+    } else {
       res.send({ message: "only admins can perform this action" });
     }
   } catch (error) {
@@ -56,12 +71,11 @@ const handleGetProduct = async (req, res) => {
   }
 };
 
-
 const handleProductDelete = async (req, res) => {
   const { id } = req.params;
   const { body } = req;
   try {
-    if(id){
+    if (id) {
       //check if user is admin
       const isAdmin = await userModel.findById(id);
       if (isAdmin && isAdmin.role.toLowerCase() === "admin") {
@@ -77,8 +91,7 @@ const handleProductDelete = async (req, res) => {
       } else {
         res.send({ message: "only admins can perform this action" });
       }
-
-    }else{
+    } else {
       res.send({ message: "only admins can perform this action" });
     }
   } catch (error) {
