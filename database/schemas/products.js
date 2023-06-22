@@ -8,7 +8,9 @@ const schemaProduct = new mongoose.Schema({
   baths: String,
   rooms: String,
   description: String,
-  location: String,
+  address: String,
+  state: String,
+  country: String,
   topSeller: Boolean,
 });
 

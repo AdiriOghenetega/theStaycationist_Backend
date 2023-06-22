@@ -5,7 +5,7 @@ const productModel = require("../database/schemas/products");
 const userModel = require("../database/schemas/user");
 
 const handleProductUpload = async (req, res) => {
-  const { name, category, images, price, description, location, rooms, baths } =
+  const { name, category, images, price, description, address,state,country, rooms, baths } =
     req.body;
   const { id } = req.params;
   try {
@@ -19,9 +19,11 @@ const handleProductUpload = async (req, res) => {
           images &&
           price &&
           description &&
-          location &&
+          address &&
           rooms &&
-          baths
+          baths &&
+          state &&
+          country 
         ) {
           const promises = [];
 
@@ -40,7 +42,9 @@ const handleProductUpload = async (req, res) => {
               images: imageUploads,
               price,
               description,
-              location,
+              address,
+              state,
+              country,
               rooms,
               baths,
               topSeller: false,
@@ -66,6 +70,20 @@ const handleGetProduct = async (req, res) => {
     console.log("product call answered");
     res.send(JSON.stringify(data));
     console.log("product data sent");
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const handleQueryProduct = async (req, res) => {
+  console.log(req.query)
+  console.log("product query api called");
+  try {
+    const data = await productModel.find(req.query);
+    // console.log(data)
+    console.log("product query call answered");
+    res.send(JSON.stringify(data));
+    console.log("product query data sent");
   } catch (error) {
     console.log(error);
   }
@@ -103,4 +121,5 @@ module.exports = {
   handleProductUpload,
   handleGetProduct,
   handleProductDelete,
+  handleQueryProduct
 };
