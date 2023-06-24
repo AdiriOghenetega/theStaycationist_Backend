@@ -12,6 +12,10 @@ const schemaProduct = new mongoose.Schema({
   state: String,
   country: String,
   topSeller: Boolean,
+  booked:{
+    type:Array,
+    default:[]
+  },
 });
 
 module.exports = mongoose.model("product", schemaProduct);

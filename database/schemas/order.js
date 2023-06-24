@@ -32,7 +32,6 @@ var orderSchema = new mongoose.Schema({
         required:true
     },
     amount:Number,
-    location: String,
     address : String
 }
 ,
