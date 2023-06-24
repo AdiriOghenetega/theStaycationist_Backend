@@ -5,8 +5,18 @@ const productModel = require("../database/schemas/products");
 const userModel = require("../database/schemas/user");
 
 const handleProductUpload = async (req, res) => {
-  const { name, category, images, price, description, address,state,country, rooms, baths } =
-    req.body;
+  const {
+    name,
+    category,
+    images,
+    price,
+    description,
+    address,
+    state,
+    country,
+    rooms,
+    baths,
+  } = req.body;
   const { id } = req.params;
   try {
     if (id) {
@@ -23,7 +33,7 @@ const handleProductUpload = async (req, res) => {
           rooms &&
           baths &&
           state &&
-          country 
+          country
         ) {
           const promises = [];
 
@@ -76,7 +86,7 @@ const handleGetProduct = async (req, res) => {
 };
 
 const handleQueryProduct = async (req, res) => {
-  console.log(req.query)
+  console.log(req.query);
   console.log("product query api called");
   try {
     const data = await productModel.find(req.query);
@@ -104,7 +114,7 @@ const handleProductDelete = async (req, res) => {
           });
           //find product Db and send
           const productdb = await productModel.find();
-          res.send({ data: productdb });
+          res.send({ data: productdb, message: "product/products deleted" });
         }
       } else {
         res.send({ message: "only admins can perform this action" });
@@ -121,5 +131,5 @@ module.exports = {
   handleProductUpload,
   handleGetProduct,
   handleProductDelete,
-  handleQueryProduct
+  handleQueryProduct,
 };
