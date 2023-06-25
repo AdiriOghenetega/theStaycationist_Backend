@@ -88,7 +88,7 @@ const handleCreateOrder = async (req, res) => {
         payment_status &&
         order_status &&
         cartData &&
-        reference 
+        reference
       ) {
         //check for guest
         const guestExists = await guestModel.findOne({ email: guest.email });
@@ -167,6 +167,30 @@ const handleUpdateOrderStatus = async (req, res) => {
   }
 };
 
+const handleOrderPaymentStatus = async (req, res) => {
+  console.log("update order payment called");
+  const { paymentStatus } = req.body;
+  const { transactionReference } = req.query;
+  try {
+    if (transactionReference) {
+      //find order with transactionReference
+      orderModel.updateOne(
+        { transactionReference: transactionReference },
+        { $set: { paymentStatus: paymentStatus } }
+      );
+
+      //find order Db
+      const orderdb = await orderModel.find();
+      res.send({ data: orderdb });
+      console.log("updated order sent");
+    } else {
+      res.send({ message: "order id not recognised" });
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 const handleDeleteOne = async (req, res) => {
   const { user_id, order_id } = req.query;
   try {
@@ -216,6 +240,7 @@ module.exports = {
   handleGetOrders,
   handleCreateOrder,
   handleUpdateOrderStatus,
+  handleOrderPaymentStatus,
   handleDeleteOne,
   handleDeleteAll,
 };
