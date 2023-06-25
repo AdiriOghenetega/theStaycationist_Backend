@@ -56,32 +56,38 @@ const handleVerifyTransaction = async (req,res)=>{
 console.log("verification called")
   const {reference} = req.query
 
-  console.log(reference)
-
-const options = {
-  hostname: 'api.paystack.co',
-  port: 443,
-  path: `/transaction/verify/${reference}`,
-  method: 'GET',
-  headers: {
-    Authorization: `Bearer ${process.env.PAY_STACK_SECRET_KEY}`
+  console.log(`/transaction/verify/${reference}`)
+try{
+  const options = {
+    hostname: 'api.paystack.co',
+    port: 443,
+    path: `/transaction/verify/${reference}`,
+    method: 'GET',
+    headers: {
+      Authorization: `Bearer ${process.env.PAY_STACK_SECRET_KEY}`,
+    }
   }
+  
+  const reqPaystack = https.request(options, resPaystack => {
+    let data = ''
+  
+    resPaystack.on('data', (chunk) => {
+      data += chunk
+    });
+  
+    resPaystack.on('end', () => {
+      console.log(JSON.parse(data))
+      res.send(JSON.parse(data))
+    })
+  }).on('error', error => {
+    console.error(error)
+    res.send(error)
+  })
+  reqPaystack.end();
+}catch(error){
+  console.log(error)
 }
 
-https.request(options, resPaystack => {
-  let data = ''
-
-  resPaystack.on('data', (chunk) => {
-    data += chunk
-  });
-
-  resPaystack.on('end', () => {
-    console.log(JSON.parse(data))
-    res.send(JSON.parse(data))
-  })
-}).on('error', error => {
-  console.error(error)
-})
 }
 
 module.exports = { handlePayment,handleVerifyTransaction };
