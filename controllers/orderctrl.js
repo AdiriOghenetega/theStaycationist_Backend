@@ -171,12 +171,13 @@ const handleOrderPaymentStatus = async (req, res) => {
   console.log("update order payment called");
   const { paymentStatus } = req.body;
   const { transactionReference } = req.query;
+  console.log(paymentStatus)
+  console.log(transactionReference)
   try {
     if (transactionReference) {
       //find order with transactionReference
       orderModel.updateOne(
-        { transactionReference: transactionReference },
-        { $set: { paymentStatus: paymentStatus } }
+        { transactionReference: transactionReference },{ paymentStatus : paymentStatus }
       );
 
       //find order Db
