@@ -174,18 +174,23 @@ const handleOrderPaymentStatus = async (req, res) => {
   console.log(paymentStatus)
   console.log(transactionReference)
   try {
-    if (transactionReference) {
-      //find order with transactionReference
-      orderModel.updateOne(
-        { transactionReference: transactionReference },{ paymentStatus : paymentStatus }
-      );
+    if(transactionReference) {
+      orderModel.updateOne({transactionReference: transactionReference}, 
+        {paymentStatus:paymentStatus}, function (err, docs) {
+        if (err){
+            console.log(err)
+        }
+        else{
+            console.log("Updated Docs : ", docs);
+        }
+    });
 
       //find order Db
       const orderdb = await orderModel.find();
       res.send({ data: orderdb });
       console.log("updated order sent");
     } else {
-      res.send({ message: "order id not recognised" });
+      res.send({ message: "transaction reference not recognised" });
     }
   } catch (error) {
     console.log(error);
